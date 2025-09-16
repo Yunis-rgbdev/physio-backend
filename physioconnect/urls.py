@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/register/', RegisterView.as_view(), name="register"),
     path('api/login/', LoginView.as_view(), name="login"),
+    path('', include('chat_session.urls')),
 ]

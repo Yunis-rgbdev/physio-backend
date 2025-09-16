@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Room</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Top Navigation Bar */
+        .top-nav {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(45deg, #00f5ff, #4169e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .username {
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            display: flex;
+            height: 100vh;
+            padding-top: 70px;
+        }
+
+        /* Video Area */
+        .video-section {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .video-grid {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            position: relative;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 2px;
+        }
+
+        .video-participant {
+            background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .video-participant:first-child {
+            grid-column: 1 / -1;
+            grid-row: 1 / -1;
+        }
+
+        .participant-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: bold;
+        }
+
+        .participant-name {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Controls */
+        .meeting-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding: 0 20px;
+        }
+
+        .control-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .mute-btn {
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+        }
+
+        .mute-btn.muted {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+        }
+
+        .video-btn {
+            background: linear-gradient(45deg, #43e97b, #38f9d7);
+        }
+
+        .video-btn.disabled {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+        }
+
+        .end-call-btn {
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            width: 70px;
+            height: 70px;
+        }
+
+        /* Chat Section */
+        .chat-section {
+            width: 350px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px 16px;
+            border-radius: 15px;
+            border-radius: 18px 18px 4px 18px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .message.own {
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            border-radius: 18px 18px 18px 4px;
+            margin-left: 20px;
+        }
+
+        .message-sender {
+            font-size: 12px;
+            color: #a0aec0;
+            margin-bottom: 5px;
+        }
+
+        .message-content {
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        /* Chat Input */
+        .chat-input-container {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 12px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .chat-input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: white;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .chat-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .send-btn {
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Custom Scrollbar */
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            border-radius: 3px;
+        }
+
+        /* Icons */
+        .icon {
+            font-style: normal;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .chat-section {
+                width: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .chat-section {
+                position: fixed;
+                right: -350px;
+                top: 70px;
+                height: calc(100vh - 70px);
+                z-index: 999;
+                transition: right 0.3s ease;
+            }
+
+            .chat-section.open {
+                right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="logo">MeetSpace</div>
+        <div class="user-info">
+            <div class="user-avatar">JD</div>
+            <span class="username">John Doe</span>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Video Section -->
+        <div class="video-section">
+            <div class="video-grid">
+                <div><video id="local-video" style="float: inline-start;" autoplay playsinline></video></div>
+                <!-- <div class="video-participant">
+                    <div class="participant-avatar">JD</div>
+                    <div class="participant-name">John Doe (You)</div>
+                </div>
+                <div class="video-participant">
+                    <div class="participant-avatar">AM</div>
+                    <div class="participant-name">Alice Miller</div>
+                </div>
+                <div class="video-participant">
+                    <div class="participant-avatar">BS</div>
+                    <div class="participant-name">Bob Smith</div>
+                </div>
+                <div class="video-participant">
+                    <div class="participant-avatar">CJ</div>
+                    <div class="participant-name">Carol Johnson</div>
+                </div> -->
+            </div>
+
+            <!-- Meeting Controls -->
+            <div class="meeting-controls">
+                <button id="btn-toggle-mic" class="control-btn mute-btn" onclick="toggleMute()" title="Mute/Unmute">
+                    MIC off/on
+                </button>
+                <button id="btn-toggle-video" class="control-btn video-btn" onclick="toggleVideo()" title="Start/Stop Video">
+                    Video off/on
+                </button>
+                <button class="control-btn end-call-btn" onclick="endCall()" title="End Call">
+                    <span class="icon">📞</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Chat Section -->
+        <div class="chat-section">
+            <div class="chat-header">
+                <span class="icon">💬</span> Meeting Chat
+            </div>
+            <div class="chat-messages">
+                <ul id="message-list"></ul>
+            </div>
+            <div class="chat-input-container">
+                <div class="chat-input-wrapper">
+                    <input id="msg" type="text" class="chat-input" placeholder="Type a message..." onkeypress="handleEnter(event)">
+                    <button id="btn-send-msg" class="send-btn" onclick="sendMessage()" title="Send Message">
+                        <span class="icon">➤</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isMuted = false;
+        let isVideoOn = true;
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            const btn = document.querySelector('.mute-btn');
+            const icon = btn.querySelector('.icon');
+            
+            if (isMuted) {
+                btn.classList.add('muted');
+                icon.textContent = '🔇';
+            } else {
+                btn.classList.remove('muted');
+                icon.textContent = '🎤';
+            }
+        }
+
+        function toggleVideo() {
+            isVideoOn = !isVideoOn;
+            const btn = document.querySelector('.video-btn');
+            const icon = btn.querySelector('.icon');
+            
+            if (isVideoOn) {
+                btn.classList.remove('disabled');
+                icon.textContent = '📹';
+            } else {
+                btn.classList.add('disabled');
+                icon.textContent = '📵';
+            }
+        }
+
+        function endCall() {
+            if (confirm('Are you sure you want to end the call?')) {
+                alert('Call ended');
+            }
+        }
+
+        function sendMessage() {
+            const input = document.querySelector('.chat-input');
+            const message = input.value.trim();
+            
+            if (message) {
+                const messagesContainer = document.querySelector('.chat-messages');
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message own';
+                
+                const now = new Date();
+                const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                messageDiv.innerHTML = `
+                    <div class="message-sender">You</div>
+                    <div class="message-content">${message}</div>
+                    <div class="message-time">${timeString}</div>
+                `;
+                
+                messagesContainer.appendChild(messageDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                input.value = '';
+            }
+        }
+
+        function handleEnter(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+    </script>
+    <script type="text/javascript" src="{% static 'js/main.js'%}"></script>
+</body>
+</html>
