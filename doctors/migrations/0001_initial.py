@@ -15,15 +15,12 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Patient',
+            name='Doctor',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('role', models.CharField(choices=[('PATIENT', 'Patient'), ('DOCTOR', 'Doctor')], max_length=20)),
-                ('age', models.IntegerField(blank=True, null=True)),
-                ('gender', models.CharField(blank=True, max_length=10, null=True)),
+                ('specialty', models.CharField(blank=True, max_length=255, null=True)),
+                ('clinic_address', models.TextField(blank=True, null=True)),
                 ('phone_number', models.CharField(blank=True, max_length=15, null=True)),
-                ('status', models.CharField(choices=[('idle', 'Idle'), ('pending', 'Pending Meeting'), ('active', 'In Meeting')], default='idle', max_length=20)),
                 ('auth', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),

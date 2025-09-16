@@ -1,41 +1,22 @@
+# patients/models.py
 from django.db import models
-from django.contrib.postgres.fields import ArrayField
+from authenticationapp.models import Auth
 
-# Create your models here.
 class Patient(models.Model):
-    health_id = models.CharField(max_length=128, unique=True, blank=True, default="")
-    
-    # Store the full fhir data of the patient
-    fhir_resources = models.JSONField()
-    
-    # indexed shortcuts for queries
-    family_name = models.CharField(max_length=128, blank=True, db_index=True)
-    given_name = ArrayField(models.CharField(max_length=50), default=list, blank=True)
-    
-    # Time and Date
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    
-    
-    
-    
-    def _extract_index_fields(self):
-        # Pulling a few searchable fields from the FHIR JSON
-        res = self.fhir_resources or {}
-        first_name = first_name(res.get("name") or [{}])[0]
-        self.family_name = first_name.get("family") or ""
-        self.given_name = first_name.get("givrn") or []
-        
-        # Health ID
-        identifiers = res.get("identifiers") or []
-        if identifiers and identifiers[0].get("value"):
-            self.health_id = self.health_id or identifiers[0]["value"]
-            
-    
+    auth = models.OneToOneField(Auth, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)  # Add name field to Patient model
+    role = models.CharField(max_length=20, choices=(("PATIENT","Patient"),("DOCTOR","Doctor")), default="PATIENT")  # Add role field
+    age = models.IntegerField(blank=True, null=True)
+    gender = models.CharField(max_length=10, blank=True, null=True)
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    status = models.CharField(max_length=20, choices=(("idle", "Idle"), ("pending","Pending Meeting"), ("active","In Meeting")), default="idle")
+
     def save(self, *args, **kwargs):
-        self._extract_index_fields()
+        # Sync name and role from Auth model
+        if self.auth:
+            self.name = self.auth.name
+            self.role = self.auth.role
         super().save(*args, **kwargs)
-        
-        
+
     def __str__(self):
-        return self.health_id or f"Patient#{self.pk}"
+        return f"{self.name} ({self.auth.national_code})"

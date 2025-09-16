@@ -50,8 +50,7 @@ INSTALLED_APPS = [
     # my apps
     "authenticationapp",
     "patients",
-    "doctor_dashboard",
-    "patient_home"
+    "doctors"
 ]
 
 MIDDLEWARE = [
@@ -150,4 +149,4 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Authetication
-AUTH_USER_MODEL = "authenticationapp.CustomUser"
+AUTH_USER_MODEL = "authenticationapp.Auth"
