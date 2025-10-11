@@ -30,7 +30,7 @@ SECRET_KEY = str(os.getenv('SECRET_KEY'))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -50,10 +50,12 @@ INSTALLED_APPS = [
     "django.contrib.postgres",
     "channels",
     # my apps
-    "authenticationapp",
+    # "authenticationapp",
+    "accounts",
+    "operators",
     "patients",
-    "doctors",
-    "chat_session",
+    # "doctors",
+    # "chat_session",
 ]
 
 MIDDLEWARE = [
@@ -84,9 +86,9 @@ TEMPLATES = [
 ]
 
 REST_FRAMEWORK = {
-    # "DEFAULT_AUTHENTICATION_CLASSES": (
-    #     "rest_framework_simplejwt.authentication.JWTAuthentication",
-    # ),
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.IsAuthenticated",
     ),
@@ -154,6 +156,15 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Authetication
-AUTH_USER_MODEL = "authenticationapp.Auth"
+AUTH_USER_MODEL = "accounts.User"
 
+# Setting up ASGI for Websocket initialization
 ASGI_APPLICATION = "physioconnect.asgi.application"
+
+# Setting up Channel Layers
+# IMPORTANT **THIS IS ONLY FOR TEST AND IN PRODUCTION WE MUST USE REDIS**
+CHANNEL_LAYER = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}

@@ -1,22 +1,20 @@
 # patients/models.py
+import uuid
 from django.db import models
-from authenticationapp.models import Auth
+from django.conf import settings
+
 
 class Patient(models.Model):
-    auth = models.OneToOneField(Auth, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)  # Add name field to Patient model
-    role = models.CharField(max_length=20, choices=(("PATIENT","Patient"),("DOCTOR","Doctor")), default="PATIENT")  # Add role field
-    age = models.IntegerField(blank=True, null=True)
-    gender = models.CharField(max_length=10, blank=True, null=True)
-    phone_number = models.CharField(max_length=15, blank=True, null=True)
-    status = models.CharField(max_length=20, choices=(("idle", "Idle"), ("pending","Pending Meeting"), ("active","In Meeting")), default="idle")
-
-    def save(self, *args, **kwargs):
-        # Sync name and role from Auth model
-        if self.auth:
-            self.name = self.auth.name
-            self.role = self.auth.role
-        super().save(*args, **kwargs)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="patient_profile"
+    )
+    birth_date = models.DateField(null=True, blank=True)
+    gender = models.CharField(max_length=20, null=True, blank=True)
+    phone_number = models.CharField(max_length=30, null=True, blank=True)
+    meta = models.JSONField(default=dict, blank=True)
 
     def __str__(self):
-        return f"{self.name} ({self.auth.national_code})"
+        return f"Patient: {self.user.full_name or self.user.national_code}"

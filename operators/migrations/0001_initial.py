@@ -16,14 +16,14 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Patient',
+            name='Operator',
             fields=[
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('birth_date', models.DateField(blank=True, null=True)),
-                ('gender', models.CharField(blank=True, max_length=20, null=True)),
+                ('specialty', models.CharField(blank=True, max_length=255, null=True)),
                 ('phone_number', models.CharField(blank=True, max_length=30, null=True)),
-                ('meta', models.JSONField(blank=True, default=dict)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='patient_profile', to=settings.AUTH_USER_MODEL)),
+                ('clinic_address', models.TextField(blank=True, null=True)),
+                ('national_code', models.CharField(blank=True, max_length=50, null=True)),
+                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='operator_profile', to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]
