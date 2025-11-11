@@ -28,7 +28,7 @@ class UserManager(BaseUserManager):
     
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    national_code = models.IntegerField(unique=True)
+    national_code = models.CharField(unique=True, max_length=10)
     full_name = models.CharField(max_length=255, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

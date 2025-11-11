@@ -4,7 +4,7 @@ from rest_framework import generics, status, permissions
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
-from .serializers import RegistertSerializer, LoginSerializer, UserProfileSerializer
+from .serializers import RegisterSerializer, LoginSerializer, UserProfileSerializer
 
 User = get_user_model()
 
@@ -54,6 +54,3 @@ class ProfileView(generics.RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
-
-
-# hello git

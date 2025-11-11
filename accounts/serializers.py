@@ -21,7 +21,7 @@ class RegisterSerializer(serializers.Serializer):
     student_code = serializers.IntegerField(required=False)
     nezam_pezeshki_code = serializers.IntegerField(required=False)
     clinic_address = serializers.CharField(required=False, allow_blank=True)
-    phone_number = serializers.CharField(required=False, allow_blank=True)
+    
 
     # Patient-only fields
     birth_date = serializers.DateField(required=False)

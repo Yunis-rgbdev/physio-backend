@@ -24,5 +24,7 @@ urlpatterns = [
     # path('auth/register/', RegisterView.as_view(), name="register"),
     # path('auth/login/', LoginView.as_view(), name="login"),
     path("api/auth/", include("accounts.routing")),
+    path("api/patients/", include("patients.routing")),
+    path("api/operators/", include("operators.routing")),
     path('', include('chat_session.urls')),
 ]
