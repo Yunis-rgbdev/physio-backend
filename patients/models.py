@@ -23,6 +23,15 @@ class Patient(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # THE CACHED FIELD: Stores the calculated 5-day average
+    vas_5day_average = models.DecimalField(
+        max_digits=5, 
+        decimal_places=2, 
+        null=True, 
+        blank=True,
+        help_text="Automatically calculated average of the last 5 VAS scores."
+    )
+
     def __str__(self):
         return f"Patient: {self.user.full_name or self.user.national_code}"
 

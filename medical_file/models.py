@@ -1,5 +1,7 @@
 # medical_file/models.py
 from django.db import models
+from django.utils import timezone
+from patients.models import Patient # Import the Patient model
 
 # Create your models here.
 class MedicalFile(models.Model):
@@ -16,9 +18,8 @@ class MedicalFile(models.Model):
     
     date_of_file = models.DateField(default=timezone.now)
     
-    # DATA: Your specific metrics belong here
-    vas_score = models.IntegerField()
-    vas_average = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    # THE SOURCE DATA: The individual daily VAS score
+    vas_score = models.IntegerField(help_text="Daily VAS score (0-10)")
     doctor_notes = models.TextField(blank=True)
 
     def __str__(self):

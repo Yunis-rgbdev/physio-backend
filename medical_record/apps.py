@@ -1,6 +1,10 @@
 from django.apps import AppConfig
 
 
-class MedicalRecordConfig(AppConfig):
+class MedicalRecordsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'medical_record'
+    name = 'medical_records'
+
+    def ready(self):
+        # Import your signals here to register them
+        import medical_records.signals
