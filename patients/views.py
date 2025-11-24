@@ -46,3 +46,33 @@ def search_patients(request):
 
     except User.DoesNotExist:
         return JsonResponse({'error': 'Patient not found'}, status=404)
+
+
+def get_patients_by_operator(request):
+    operator_national_code = request.GET.get('national_code')
+
+    if not operator_national_code:
+        return JsonResponse({'error': 'Operator national code is required'}, status=400)
+
+    try:
+        # Fetch the user and the related patient_profile in one query
+        user = User.objects.select_related('patient_profile').get(national_code=operator_national_code)
+
+        data = {
+            'national_code': user.national_code,
+            'full_name': user.full_name,
+            'is_active': user.is_active,
+            'last_login': user.last_login
+        }
+        
+        patient = getattr(user, 'patient_profile', None)
+        if patient:
+            data.update({
+                'vas_avg': patient.vas_average 
+            })
+        return JsonResponse(data)
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'Patient not found'}, status=404)
+
+
+    

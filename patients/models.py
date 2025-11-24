@@ -24,7 +24,7 @@ class Patient(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     # THE CACHED FIELD: Stores the calculated 5-day average
-    vas_5day_average = models.DecimalField(
+    vas_average = models.DecimalField(
         max_digits=5, 
         decimal_places=2, 
         null=True, 
@@ -34,22 +34,3 @@ class Patient(models.Model):
 
     def __str__(self):
         return f"Patient: {self.user.full_name or self.user.national_code}"
-
-    
-
-class MedicalHistory(models.Model):
-    """Patient's medical history"""
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='medical_histories')
-    condition = models.CharField(max_length=200)
-    diagnosed_date = models.DateField()
-    notes = models.TextField(blank=True)
-    is_chronic = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    
-    class Meta:
-        db_table = 'medical_histories'
-        verbose_name_plural = 'Medical histories'
-    
-    def __str__(self):
-        return f"{self.patient.get_full_name()} - {self.condition}"
