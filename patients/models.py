@@ -26,6 +26,8 @@ class Patient(models.Model):
     def __str__(self):
         return f"Patient: {self.user.full_name or self.user.national_code}"
 
+    
+
 class MedicalHistory(models.Model):
     """Patient's medical history"""
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='medical_histories')
