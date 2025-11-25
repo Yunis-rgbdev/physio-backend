@@ -19,6 +19,7 @@ class Patient(models.Model):
     emergency_contact_name = models.CharField(max_length=200, blank=True, null=True)
     emergency_contact_phone = models.CharField(max_length=20, blank=True, null=True)
     emergency_contact_relation = models.CharField(max_length=50, blank=True, null=True)
+    current_operator = models.CharField(max_length=11, blank=True, null=True)
     # Metadata
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
