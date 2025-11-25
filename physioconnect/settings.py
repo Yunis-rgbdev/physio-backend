@@ -54,6 +54,9 @@ INSTALLED_APPS = [
     "accounts",
     "operators",
     "patients",
+    "attachments",
+    "medical_file",
+    "medical_record"
     # "doctors",
     # "chat_session",
 ]

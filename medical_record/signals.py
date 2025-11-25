@@ -4,7 +4,7 @@ from django.db.models import Avg
 from datetime import timedelta
 from django.utils import timezone
 
-from .models import MedicalFile # The model that holds the daily score
+from medical_file.models import MedicalFile # The model that holds the daily score
 
 # Function to calculate and update the patient's 5-day average
 def update_patient_vas_average(patient):
