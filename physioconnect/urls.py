@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from medical_record.views import AddVASScoreView
 # from authenticationapp.views import LoginView, RegisterView
 
 
@@ -27,4 +28,5 @@ urlpatterns = [
     path("api/patients/", include("patients.routing")),
     path("api/operators/", include("operators.routing")),
     path('', include('chat_session.urls')),
+    path('add-vas-score/', AddVASScoreView.as_view(), name='add-vas-score'),
 ]

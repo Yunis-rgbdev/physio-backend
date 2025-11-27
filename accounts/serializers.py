@@ -50,7 +50,7 @@ class RegisterSerializer(serializers.Serializer):
         # Patient fields
         patient_fields = {
             key: validated_data.pop(key)
-            for key in ["birth_date", "gender", "phone_number"]
+            for key in ["birth_date", "gender", "phone_number", "full_name"]
             if key in validated_data
         }
 

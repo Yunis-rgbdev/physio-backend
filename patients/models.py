@@ -11,6 +11,7 @@ class Patient(models.Model):
         on_delete=models.CASCADE,
         related_name="patient_profile"
     )
+    full_name = models.CharField(max_length=255, blank=True)
     birth_date = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=20, null=True, blank=True)
     phone_number = models.CharField(max_length=30, null=True, blank=True)
@@ -25,7 +26,7 @@ class Patient(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     # THE CACHED FIELD: Stores the calculated 5-day average
-    vas_average = models.DecimalField(
+    vas_5day_average = models.DecimalField(
         max_digits=5, 
         decimal_places=2, 
         null=True, 

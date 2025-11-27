@@ -1,21 +1,26 @@
 # medical_record/models.py
 from django.db import models
 from patients.models import Patient
+from operators.models import Operator
 
-# Create your models here.
 class MedicalRecord(models.Model):
     """
-    This is the 'Big Folder'. It might represent a specific injury (e.g., 'Leg Fracture 2024')
-    or a long-term case.
+    Bridge table: Links Patient + Operator to their medical files
     """
     patient = models.ForeignKey(
         "patients.Patient",
         on_delete=models.CASCADE,
         related_name="medical_records"
     )
-    case_name = models.CharField(max_length=200) # e.g. "Left Knee Surgery"
+    operator = models.ForeignKey(
+        "operators.Operator",
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="medical_records"
+    )
+    document_id = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"Case: {self.case_name} ({self.patient})"
+        return f"Case: {self.document_id} - Patient: {self.patient.national_code}"
