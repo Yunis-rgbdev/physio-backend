@@ -4,22 +4,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import AllowAny
-from .serializers import MedicalFileSerializer
+from .serializers import MedicalFileSerializer, MedicalFileReadSeriallizer
 from patients.models import Patient
+from operators.models import Operator
 from medical_file.models import MedicalFile
 
-class AddVASScoreView(APIView):
-    """
-    POST endpoint to create a new medical file entry
-    Expected JSON format:
-    {
-        "patient_national_code": "1234567890",
-        "operator_national_code": "0987654321",
-        "vas_score": 7,
-        "doctor_notes": "Patient shows improvement",
-        "date_of_file": "2025-11-27"  // optional, defaults to today
-    }
-    """
+class MedicalFilesView(APIView):
     permission_classes = [AllowAny]  # Changed from AllowAny for security
     
     def post(self, request, *args, **kwargs):
@@ -44,9 +34,7 @@ class AddVASScoreView(APIView):
     
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-
-    def get(self, request, national_code, *args, **kwargs):
+    def get_by_patient(self, national_code):
         try:
             patient = Patient.objects.get(user__national_code=national_code)
         except Patient.DoesNotExist:
@@ -56,3 +44,20 @@ class AddVASScoreView(APIView):
 
         serializer = MedicalFileReadSeriallizer(files, many=True)
         return Response(serializer.data, status=200)
+
+    def get_by_operator(self, national_code):
+        try:
+            operator = Operator.objects.get(user__national_code=national_code)
+        except Operator.DoesNotExist:
+            return Response({"error": "Operator not found"}, status=404)
+
+        files = MedicalFile.objects.filter(medical_record__operator=operator)
+
+        serializer = MedicalFileReadSeriallizer(files, many=True)
+        return Response(serializer.data, status=200)
+
+    def get(self, request, mode, national_code):
+        if mode == "patient":
+            return self.get_by_patient(national_code)
+        elif mode == "operator":
+            return self.get_by_operator(national_code)

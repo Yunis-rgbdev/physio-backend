@@ -2,6 +2,8 @@ from django.shortcuts import render
 from .models import Patient
 from accounts.models import User;
 from django.http import JsonResponse
+from operators.models import Operator
+from medical_file.models import MedicalFile
 
 # Create your views here.
 def search_patients(request):
@@ -48,15 +50,18 @@ def search_patients(request):
         return JsonResponse({'error': 'Patient not found'}, status=404)
 
 
-def get_patients_by_operator(request):
-    operator_national_code = request.GET.get('national_code')
-
-    if not operator_national_code:
+def get_patients_by_operator(request, op_national_code):
+    if not op_national_code:
         return JsonResponse({'error': 'Operator national code is required'}, status=400)
+    else:
+        try:
+            operator = Operator.objects.get(user__national_code=op_national_code)
+        except Operator.DoesNotExist:
+            return Response({"error": "Operator not found"}, status=404)
+    
+    files = MedicalFile.objects.filter(medical_record__operator=operator)
 
     try:
-        # Fetch the user and the related patient_profile in one query
-        user = User.objects.select_related('patient_profile').get(national_code=operator_national_code)
 
         data = {
             'national_code': user.national_code,
@@ -73,6 +78,3 @@ def get_patients_by_operator(request):
         return JsonResponse(data)
     except User.DoesNotExist:
         return JsonResponse({'error': 'Patient not found'}, status=404)
-
-
-    

@@ -1,8 +1,8 @@
-# patients/routing.py
+# operators/routing.py
 from django.urls import path
-from . import views
+from .views import OperatorServiceView
 
 urlpatterns = [
-    # path("operators/", FhirPatientView.as_view(), name="fhir_patient_create_or_upsert"),
-    path("search/", views.search_operator, name="operator_detail"),
+    path("<str:mode>/<str:national_code>/", OperatorServiceView.as_view(), name="operator_service"),
+    # path("search/", views.search_operator, name="operator_detail"),
 ]

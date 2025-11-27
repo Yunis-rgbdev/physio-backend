@@ -69,6 +69,7 @@ class MedicalFileReadSeriallizer(serializers.ModelSerializer):
         fields = [
             "id",
             "date_of_file",
+            'doctor_notes',
             "vas_score",
             "patient_national_code",
             "operator_national_code",

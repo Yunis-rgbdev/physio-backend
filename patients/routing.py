@@ -5,5 +5,5 @@ from . import views
 urlpatterns = [
     # path("patients/", FhirPatientView.as_view(), name="fhir_patient_create_or_upsert"),
     path("search/", views.search_patients, name="patient_detail"),
-    path("odpatients/", views.get_patients_by_operator, name="patient_fetch")
+    path("odpatients/<str:national_code>/", views.get_patients_by_operator, name="patient_fetch")
 ]
