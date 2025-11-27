@@ -5,6 +5,8 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import AllowAny
 from .serializers import MedicalFileSerializer
+from patients.models import Patient
+from medical_file.models import MedicalFile
 
 class AddVASScoreView(APIView):
     """
@@ -41,3 +43,16 @@ class AddVASScoreView(APIView):
             )
     
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+    def get(self, request, national_code, *args, **kwargs):
+        try:
+            patient = Patient.objects.get(user__national_code=national_code)
+        except Patient.DoesNotExist:
+            return Response({"error": "Patient not found"}, status=404)
+
+        files = MedicalFile.objects.filter(medical_record__patient=patient)
+
+        serializer = MedicalFileReadSeriallizer(files, many=True)
+        return Response(serializer.data, status=200)

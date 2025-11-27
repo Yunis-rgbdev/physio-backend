@@ -60,6 +60,21 @@ class MedicalFileSerializer(serializers.ModelSerializer):
 
 
 
+class MedicalFileReadSeriallizer(serializers.ModelSerializer):
+    patient_national_code = serializers.CharField(source="medical_record.patient.user.national_code", read_only=True)
+    operator_national_code = serializers.CharField(source="medical_record.operator.user.national_code", read_only=True)
+
+    class Meta:
+        model = MedicalFile
+        fields = [
+            "id",
+            "date_of_file",
+            "vas_score",
+            "patient_national_code",
+            "operator_national_code",
+        ]
+
+
 # {
 #   "patient_national_code": "0928019589",
 #   "operator_national_code": "0928013456", 
