@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "django.contrib.postgres",
+    'django_filters',
     "channels",
     # my apps
     # "authenticationapp",
@@ -56,7 +57,8 @@ INSTALLED_APPS = [
     "patients",
     "attachments",
     "medical_file",
-    "medical_record"
+    "medical_record",
+    "tasks",
     # "doctors",
     # "chat_session",
 ]

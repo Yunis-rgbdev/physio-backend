@@ -2,7 +2,17 @@
 from django.urls import path
 from .views import OperatorServiceView
 
+operator_view = OperatorServiceView.as_view({
+    "get": "search",
+    "post": "search",
+})
+
+active_sessions_view = OperatorServiceView.as_view({
+    "get": "active_sessions",
+    "post": "active_sessions",
+})
+
 urlpatterns = [
-    path("<str:mode>/<str:national_code>/", OperatorServiceView.as_view(), name="operator_service"),
-    # path("search/", views.search_operator, name="operator_detail"),
+    path("<str:national_code>/search/", operator_view),
+    path("<str:national_code>/active-sessions/", active_sessions_view),
 ]

@@ -3,9 +3,6 @@ from django.db import models
 # Create your models here.
 
 class MedicalRecord(models.Model):
-    """
-    Stores the data for a specific period of aid or visit.
-    """
     patient = models.ForeignKey(
         Patient, 
         on_delete=models.CASCADE, 

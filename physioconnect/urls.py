@@ -27,6 +27,7 @@ urlpatterns = [
     path("api/auth/", include("accounts.routing")),
     path("api/patients/", include("patients.routing")),
     path("api/operators/", include("operators.routing")),
+    path('tasks/', include('tasks.router')),
     path('', include('chat_session.urls')),
     path('add-vas-score/', MedicalFilesView.as_view(), name='add-vas-score'),
     path('files/<str:mode>/<str:national_code>/', MedicalFilesView.as_view()),
