@@ -9,7 +9,7 @@ class MedicalFileSerializer(serializers.ModelSerializer):
     patient_national_code = serializers.CharField(write_only=True)
     operator_national_code = serializers.CharField(write_only=True)
 
-    date_of_file = serializers.DateField(required=False)
+    start_date = serializers.DateField(required=False)
     
     class Meta:
         model = MedicalFile
@@ -17,7 +17,8 @@ class MedicalFileSerializer(serializers.ModelSerializer):
             'id', 
             'vas_score', 
             'doctor_notes', 
-            'date_of_file',
+            'start_date',
+            'end_date',
             'patient_national_code',
             'operator_national_code'
         ]
@@ -26,37 +27,31 @@ class MedicalFileSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         patient_national_code = validated_data.pop('patient_national_code')
         operator_national_code = validated_data.pop('operator_national_code')
-        
-        # Changed: Use user__national_code to search through relationship
-        try:
-            patient = Patient.objects.get(user__national_code=patient_national_code)
-        except Patient.DoesNotExist:
-            raise serializers.ValidationError(
-                {"patient_national_code": f"Patient with national code {patient_national_code} not found"}
-            )
-        
-        try:
-            operator = Operator.objects.get(user__national_code=operator_national_code)
-        except Operator.DoesNotExist:
-            raise serializers.ValidationError(
-                {"operator_national_code": f"Operator with national code {operator_national_code} not found"}
-            )
-        
-        medical_record, created = MedicalRecord.objects.get_or_create(
+
+        patient = Patient.objects.get(user__national_code=patient_national_code)
+        operator = Operator.objects.get(user__national_code=operator_national_code)
+
+        medical_record, _ = MedicalRecord.objects.get_or_create(
             patient=patient,
             operator=operator,
-            is_active=True,
-            defaults={
-                'document_id': f"MR-{patient.user.national_code}-{operator.user.national_code}"
-            }
+            defaults={'document_id': f"MR-{patient.user.national_code}-{operator.user.national_code}"}
         )
-        
+
+        # Deactivate any previous active session
+        MedicalFile.objects.filter(
+            medical_record=medical_record,
+            is_active=True
+        ).update(is_active=False)
+
+        # Create the new active session
         medical_file = MedicalFile.objects.create(
             medical_record=medical_record,
-            **validated_data
+            **validated_data,
+            is_active=True
         )
-        
+
         return medical_file
+
 
 
 
@@ -68,7 +63,8 @@ class MedicalFileReadSeriallizer(serializers.ModelSerializer):
         model = MedicalFile
         fields = [
             "id",
-            "date_of_file",
+            "start_date",
+            "end_date",
             'doctor_notes',
             "vas_score",
             "patient_national_code",
@@ -79,6 +75,6 @@ class MedicalFileReadSeriallizer(serializers.ModelSerializer):
 # {
 #   "patient_national_code": "0928019589",
 #   "operator_national_code": "0928013456", 
-#   "vas_score": 7,
-#   "doctor_notes": "..."
+#   "vas_score": 5,
+#   "doctor_notes": "updated note"
 # }

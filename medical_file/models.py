@@ -11,7 +11,8 @@ class MedicalFile(models.Model):
     )
     start_date = models.DateField(auto_now_add=True)
     end_date = models.DateField(null=True, blank=True)
-
+    vas_score = models.IntegerField(help_text="Daily VAS score (0-10)", default=0)
+    doctor_notes = models.TextField(blank=True)
     # Only ONE of these per record can be active at a time
     is_active = models.BooleanField(default=True)
 

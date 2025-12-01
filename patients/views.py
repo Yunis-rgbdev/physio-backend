@@ -19,24 +19,6 @@ class PatientServiceView(ViewSet):
     permission_classes = [AllowAny]
     # @action(detail=True, methods=['patch'], url_path='active-session')
     def update_active_session(self, request, national_code=None):
-        # Verify permission (patient updating their own data, or authorized staff)
-        # if not (request.user.national_code == national_code or 
-        #         request.user.is_staff):
-        #     return Response(
-        #         {"error": "Unauthorized"}, 
-        #         status=status.HTTP_403_FORBIDDEN
-        #     )
-        
-        # # Validate allowed fields
-        # allowed_fields = {"vas_score", "notes"}
-        # invalid_fields = set(request.data.keys()) - allowed_fields
-        # if invalid_fields:
-        #     return Response(
-        #         {"error": f"Invalid fields: {invalid_fields}"}, 
-        #         status=status.HTTP_400_BAD_REQUEST
-        #     )
-
-        # 1. Get the patient's medical record
         try:
             record = MedicalRecord.objects.get(patient__user__national_code=national_code)
         except MedicalRecord.DoesNotExist:

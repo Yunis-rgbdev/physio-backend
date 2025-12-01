@@ -16,7 +16,7 @@ def update_patient_vas_average(patient):
     
     recent_scores = MedicalFile.objects.filter(
         medical_record__patient=patient, 
-        date_of_file__range=(start_date, end_date)
+        start_date__range=(start_date, end_date)
     ).aggregate(
         average_vas=Avg('vas_score')
     )
