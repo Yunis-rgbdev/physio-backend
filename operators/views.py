@@ -7,7 +7,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework import status
 from django.http import JsonResponse
 from medical_file.models import MedicalFile
-from medical_record.serializers import MedicalFileReadSeriallizer
+from medical_file.serializers import MedicalFileReadSeriallizer
 
 # Create your views here.
 
