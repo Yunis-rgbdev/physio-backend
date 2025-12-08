@@ -43,7 +43,8 @@ class PatientServiceView(ViewSet):
             "updated_data": {field: getattr(active_file, field) for field in allowed_fields}
         }, status=status.HTTP_200_OK)
 
-    def search_patients(request):
+    @action(detail=False, methods=["get"])
+    def search(self, request):
         national_code = request.GET.get('national_code')
 
         if not national_code:

@@ -70,6 +70,7 @@ class MedicalFileReadSeriallizer(serializers.ModelSerializer):
             "vas_score",
             "patient_national_code",
             "operator_national_code",
+            "is_active"
         ]
 
 

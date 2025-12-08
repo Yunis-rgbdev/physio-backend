@@ -16,7 +16,7 @@ class MedicalRecordViewSet(ViewSet):
     @action(detail=False, methods=['get'], url_path=r'operator/(?P<national_code>\w+)')
     def get_by_operator(self, request, national_code=None):
         try:
-            op = Operator.objects.get(user__national_code=natioanl_code)
+            op = Operator.objects.get(user__national_code=national_code)
         except Operator.DoesNotExist:
             return Response({"error": "Operator Not Found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -44,6 +44,16 @@ class MedicalRecordViewSet(ViewSet):
             return Response({"error": "Medical record not found"}, status=status.HTTP_404_NOT_FOUND)
          
         serializer = MedicalRecordSerializer(medical_record, data=request.data, partial=True)
+        if serializer.is_valid():
+            updated_instance = serializer.save()
+            read_serializer = MedicalRecordReadSerializer(updated_instance)
+            return Response(
+                {
+                    "message": f"Medical Record { pk } updated successfully",
+                    "data": read_serializer.data
+                },
+                status=status.HTTP_200_OK
+            )
 
     def destroy(self, request, pk=None):
         try: 
@@ -54,6 +64,6 @@ class MedicalRecordViewSet(ViewSet):
         record.delete()
 
         return Response(
-            {"message": f"Medical file {pk} deleted successfully"}, 
+            {"message": f"Medical record {pk} deleted successfully"}, 
             status=status.HTTP_204_NO_CONTENT
         )

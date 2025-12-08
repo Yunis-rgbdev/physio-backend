@@ -21,8 +21,8 @@ urlpatterns = [
 # URL Path                                    Method   ViewSet Method        Purpose
 # -----------------------------------------------------------------------------------------------------
 # /medical-records/                             POST     create                Create (your 'create' method)
-# /medical-files/<pk>/                        PUT/PATCH update               Update (your 'update' method)
-# /medical-files/<pk>/                        DELETE   destroy               Delete (your 'destroy' method)
+# /medical-records/<pk>/                        PUT/PATCH update               Update (your 'update' method)
+# /medical-records/<pk>/                        DELETE   destroy               Delete (your 'destroy' method)
 # /medical-records/patient/<national_code>/     GET      get_by_patient        Custom action
-# /medical-files/operator/<national_code>/    GET      get_by_operator       Custom action
+# /medical-records/operator/<national_code>/    GET      get_by_operator       Custom action
 # -----------------------------------------------------------------------------------------------------
