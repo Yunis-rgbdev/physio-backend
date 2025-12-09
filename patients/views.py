@@ -58,7 +58,7 @@ class PatientServiceView(ViewSet):
             data = {
                 'id': str(user.id),
                 'national_code': user.national_code,
-                'full_name': user.full_name,
+                # 'full_name': user.full_name,
                 'role': user.role,
                 'is_active': user.is_active,
                 'is_staff': user.is_staff,
@@ -73,6 +73,7 @@ class PatientServiceView(ViewSet):
                     'birth_date': patient.birth_date,
                     'gender': patient.gender,
                     'phone_number': patient.phone_number,
+                    'full_name': patient.full_name,
                     'email': patient.email,
                     'emergency_contact_name': patient.emergency_contact_name,
                     'emergency_contact_phone': patient.emergency_contact_phone,
